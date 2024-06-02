@@ -18,7 +18,10 @@
     "url": "https://github.com/Wargoth-ks/goit-js-hw-11/issues"
   },
   "dependencies": {
-    "modern-normalize": "^1.1.0"
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "modern-normalize": "^1.1.0",
+    "notiflix": "^3.2.7"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.6.0",
