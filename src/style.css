@@ -1,0 +1,70 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* styling navlist */
+#navlist {
+    background-color: black;
+    position: absolute;
+    width: 100%;
+}
+
+/* styling navlist anchor element */
+#navlist a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.navlist-right {
+    float: right;
+}
+
+/* hover effect of navlist anchor element */
+#navlist a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+/* styling search bar */
+.search input[type=text] {
+    width: 300px;
+    height: 37px;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+    text-indent: 5%;
+}
+
+.search {
+    float: inline-end;
+    margin: 10px;
+}
+
+.search button {
+    background-color: darkred;
+    color: #f2f2f2;
+    float: right;
+    padding: 8px 15px;
+    margin-right: 16px;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+    margin-left: 1em;
+    border-radius: 10px;
+}
+
+/* styling logo and tag */
+.content {
+    padding-top: 40px;
+}
+
+.content h1 {
+    color: green;
+}
