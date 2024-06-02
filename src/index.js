@@ -10,10 +10,7 @@ require('dotenv').config();
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
 const largeImg = new SimpleLightbox('.gallery a', {
-    // captionPosition: 'bottom',
-    captionDelay: 250,
-    // captionsData: 'alt',
-    // close: true,
+    captionDelay: 250
 });
 
 const search = document.querySelector('.search-form');
@@ -28,27 +25,25 @@ async function getImages(evt) {
     );
 }
 
-
 function onSearch(e) {
     e.preventDefault();
 
-    // gallery.innerHTML = '';
+    gallery.innerHTML = '';
     const {
         elements: { searchQuery },
     } = e.target;
     const input = searchQuery.value.trim().toLowerCase();
-
+    console.log(input);
     getImages(input)
         .then(response => {
             // console.dir(response.data.hits);
             console.dir(response.status);
             const markup = createMarkup(response.data.hits);
             gallery.insertAdjacentHTML('beforeend', markup);
+            largeImg.refresh();
         })
         .catch(error => console.log(error.response.status));
     search.reset();
-    // console.log(largeImg);
-    // largeImg.refresh();
     // btnMore.style.display = 'inline';
 }
 
