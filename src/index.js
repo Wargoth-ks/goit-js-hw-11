@@ -8,43 +8,59 @@ import { params } from './helpers/common';
 require('dotenv').config();
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 const largeImg = new SimpleLightbox('.gallery a', {
-    captionDelay: 250
+    captionDelay: 250,
 });
 
-const search = document.querySelector('.search-form');
+const formData = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
 // let btnMore = document.querySelector('.load-more');
 
 const { typeimg, orient, safeimg } = params;
 
-async function getImages(evt) {
-    return await axios.get(
-        `?key=${process.env.API_KEY}&q=${evt}&image_type=${typeimg}&orientation=${orient}&safesearch=${safeimg}`,
-    );
+// Render data
+function renderData(res) {
+    const markup = createMarkup(res);
+    gallery.insertAdjacentHTML('beforeend', markup);
+    largeImg.refresh();
+    formData.reset();
 }
 
-function onSearch(e) {
-    e.preventDefault();
+// Key value search
+async function getImages(keyword) {
+    try {
+        const response = await axios.get(
+            `?key=${process.env.API_KEY}&q=${keyword}&imagetype=${typeimg}&orientation=${orient}&safesearch=${safeimg}`,
+        );
+        const {
+            data: { hits },
+        } = response;
+
+        if (hits.length === 0) {
+            console.log('No results');
+            return;
+        }
+        console.log('Data ok', hits);
+        renderData(hits);
+    } catch (error) {
+        console.log('Error: ', error.message);
+    }
+}
+
+// Listen button
+formData.addEventListener('submit', async function (event) {
+    event.preventDefault();
 
     gallery.innerHTML = '';
     const {
         elements: { searchQuery },
-    } = e.target;
-    const input = searchQuery.value.trim().toLowerCase();
-    console.log(input);
-    getImages(input)
-        .then(response => {
-            // console.dir(response.data.hits);
-            console.dir(response.status);
-            const markup = createMarkup(response.data.hits);
-            gallery.insertAdjacentHTML('beforeend', markup);
-            largeImg.refresh();
-        })
-        .catch(error => console.log(error.response.status));
-    search.reset();
-    // btnMore.style.display = 'inline';
-}
-
-search.addEventListener('submit', onSearch);
+    } = event.target;
+    const inputData = searchQuery.value.trim().toLowerCase();
+    if (inputData.length == '') {
+        // console.dir('No input data');
+        throw new TypeError('No input data');
+    }
+    await getImages(inputData);
+});
