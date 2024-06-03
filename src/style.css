@@ -7,7 +7,6 @@
 /* styling navlist */
 #navlist {
     background-color: black;
-    position: absolute;
     width: 100%;
     position: fixed;
 }
@@ -34,19 +33,6 @@
 }
 
 /* styling search bar */
-.search input[type=text] {
-    width: 300px;
-    height: 37px;
-    border-radius: 10px;
-    border: none;
-    font-size: 18px;
-    text-indent: 5%;
-}
-
-.search {
-    float: inline-end;
-    margin: 10px;
-}
 
 .search button {
     background-color: darkred;
@@ -61,14 +47,37 @@
     border-radius: 10px;
 }
 
+/* Стили для поисковой строки */
+.search {
+    float: right; /* Выравниваем по правому краю */
+    margin: 10px;
+}
+
+.search input[type=text] {
+    width: 300px; /* Ширина по умолчанию */
+    height: 37px;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+    text-indent: 5%;
+}
+
+/* Медиа запросы для изменения ширины поля ввода */
+@media only screen and (max-width: 600px) {
+    .search input[type=text] {
+        width: 80%; /* Уменьшаем ширину при узком экране */
+    }
+}
+
+/* Стили для галереи */
 .gallery {
     display: flex;
     flex-wrap: wrap;
-    padding-top: 70;
+    padding-top: 70px; /* Добавил px для правильного отображения */
 }
 
 .photo-card {
-    margin-left: 25px;
+    margin-left: 25px; /* Отступ слева по умолчанию */
     margin-top: 15px;
     margin-bottom: 15px;
     border-width: 5px;
@@ -76,8 +85,16 @@
     border-style: outset;
     border-color: black;
     background-color: white;
-
 }
+
+/* Медиа запросы для изменения отступа карточек */
+@media only screen and (max-width: 600px) {
+    .photo-card {
+        margin-left: 0; /* Убираем отступ слева при узком экране */
+        width: 100%; /* Растягиваем карточки на всю ширину при узком экране */
+    }
+}
+
 
 .info {
     /* display: flex; */
@@ -104,7 +121,7 @@
 }
 
 .load-more:hover {
-    background-color:dodgerblue;
+    background-color: dodgerblue;
 }
 
 
