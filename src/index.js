@@ -1,6 +1,7 @@
 import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import { Notify } from 'notiflix';
 
 import { createMarkup } from './helpers/markup';
 import { params, elems } from './helpers/common';
@@ -9,8 +10,8 @@ require('dotenv').config();
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 axios.defaults.headers.get['Content-Type'] = 'application/json';
-const api_key = process.env.API_KEY;
 
+const api_key = process.env.API_KEY;
 const { typeimg, orient, safeimg } = params;
 const { formData, gallery, btnMore } = elems;
 
@@ -18,7 +19,6 @@ const largeImg = new SimpleLightbox('.gallery a', {
     captionDelay: 250,
 });
 
-// Глобальные переменные для хранения текущей страницы и количества фотографий на странице
 let data;
 let currentPage = 1;
 const perPage = 40; // Изменено на 40
@@ -31,13 +31,10 @@ function renderData(res) {
     formData.reset();
 }
 
-// Функция для обработки ошибок
 function handleError(error) {
     console.error(error);
-    // Обработка ошибки, например, вывод сообщения об ошибке на странице
 }
 
-// Функция для отображения кнопки "Load more" и обработки нажатия на нее
 function handleLoadMoreButton(totalHits) {
     const trueVal = currentPage * perPage;
     console.dir(`Loaded: ${trueVal} pages`);
@@ -45,12 +42,18 @@ function handleLoadMoreButton(totalHits) {
         btnMore.style.display = 'inline';
     } else {
         btnMore.style.display = 'none';
-        // Вывод сообщения об окончании результатов поиска
-        // Например, можно создать элемент с сообщением и добавить его на страницу
-        const endMessage = document.createElement('p');
-        endMessage.textContent =
-            "We're sorry, but you've reached the end of search results.";
-        gallery.appendChild(endMessage);
+        Notify.info(
+            `"We're sorry, but you've reached the end of search results."`,
+            {
+                width: '300px',
+                fontSize: '20px',
+                position: 'center-top',
+                timeout: 5000,
+                plainText: false,
+                cssAnimationStyle: 'fade',
+                cssAnimation: true,
+            },
+        );
     }
 }
 
@@ -58,6 +61,23 @@ btnMore.addEventListener('click', async function () {
     currentPage += 1;
     await getImages();
 });
+
+let notificationsShown = false;
+
+function showNotification(totalHits) {
+    if (!notificationsShown) {
+        Notify.success(`Hooray! We found ${totalHits} images.`, {
+            width: '300px',
+            fontSize: '20px',
+            position: 'center-top',
+            timeout: 5000,
+            plainText: false,
+            cssAnimationStyle: 'fade',
+            cssAnimation: true,
+        });
+        notificationsShown = true;
+    }
+}
 
 // Key value search
 async function getImages() {
@@ -73,13 +93,30 @@ async function getImages() {
         } = response;
 
         if (hits.length === 0) {
+            Notify.failure(
+                'Sorry, there are no images matching your search query. Please try again.',
+                {
+                    width: '300px',
+                    fontSize: '20px',
+                    position: 'center-center',
+                    timeout: 5000,
+                    plainText: false,
+                    cssAnimationStyle: 'fade',
+                    cssAnimation: true,
+                },
+            );
             throw new TypeError('No results');
         }
 
-        renderData(hits);
         console.dir('Response status:', response.status);
         console.log('Total pages:', totalHits);
+
+        renderData(hits);
         handleLoadMoreButton(totalHits);
+
+        if (!notificationsShown && hits.length === 40) {
+            showNotification(totalHits);
+        }
     } catch (error) {
         handleError(error);
     }
@@ -95,9 +132,21 @@ formData.addEventListener('submit', async function (event) {
     } = event.target;
     const inputData = searchQuery.value.trim().toLowerCase();
     if (inputData.length == '') {
+        Notify.failure(
+            'Sorry, there are no images matching your search query. Please try again.',
+            {
+                width: '300px',
+                fontSize: '20px',
+                position: 'center-center',
+                timeout: 5000,
+                plainText: false,
+                cssAnimationStyle: 'fade',
+                cssAnimation: true,
+            },
+        );
         throw new TypeError('No input data');
     }
     data = inputData;
-    currentPage = 1; // Сброс значения currentPage при новом поиске
+    currentPage = 1;
     await getImages();
 });
