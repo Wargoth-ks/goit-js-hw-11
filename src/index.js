@@ -4,7 +4,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix';
 
 import { createMarkup } from './helpers/markup';
-import { params, elems } from './helpers/common';
+import { params, elems, failOpts, sucOpts } from './helpers/common';
 
 require('dotenv').config();
 
@@ -12,7 +12,8 @@ axios.defaults.baseURL = 'https://pixabay.com/api/';
 axios.defaults.headers.get['Content-Type'] = 'application/json';
 
 // const api_key = process.env.API_KEY;
-const api_key = "28194821-49041d995ecd04735d9e20d11"
+const api_key = '?key=28194821-49041d995ecd04735d9e20d11';
+
 const { typeimg, orient, safeimg } = params;
 const { formData, gallery, btnMore } = elems;
 
@@ -22,7 +23,7 @@ const largeImg = new SimpleLightbox('.gallery a', {
 
 let data;
 let currentPage = 1;
-const perPage = 40; // Изменено на 40
+const perPage = 40;
 
 // Render data
 function renderData(res) {
@@ -44,16 +45,8 @@ function handleLoadMoreButton(totalHits) {
     } else {
         btnMore.style.display = 'none';
         Notify.info(
-            `"We're sorry, but you've reached the end of search results."`,
-            {
-                width: '300px',
-                fontSize: '20px',
-                position: 'center-top',
-                timeout: 5000,
-                plainText: false,
-                cssAnimationStyle: 'fade',
-                cssAnimation: true,
-            },
+            "We're sorry, but you've reached the end of search results.",
+            sucOpts,
         );
     }
 }
@@ -67,15 +60,7 @@ let notificationsShown = false;
 
 function showNotification(totalHits) {
     if (!notificationsShown) {
-        Notify.success(`Hooray! We found ${totalHits} images.`, {
-            width: '300px',
-            fontSize: '20px',
-            position: 'center-top',
-            timeout: 5000,
-            plainText: false,
-            cssAnimationStyle: 'fade',
-            cssAnimation: true,
-        });
+        Notify.success(`Hooray! We found ${totalHits} images.`, sucOpts);
         notificationsShown = true;
     }
 }
@@ -83,7 +68,7 @@ function showNotification(totalHits) {
 // Key value search
 async function getImages() {
     try {
-        let searchParams = `?key=${api_key}&q=${data}&imagetype=${typeimg}&orientation=${orient}&safesearch=${safeimg}`;
+        let searchParams = `${api_key}&q=${data}${typeimg}${orient}${safeimg}`;
 
         const response = await axios.get(
             searchParams + `&page=${currentPage}&per_page=${perPage}`,
@@ -96,17 +81,9 @@ async function getImages() {
         if (hits.length === 0) {
             Notify.failure(
                 'Sorry, there are no images matching your search query. Please try again.',
-                {
-                    width: '300px',
-                    fontSize: '20px',
-                    position: 'center-center',
-                    timeout: 5000,
-                    plainText: false,
-                    cssAnimationStyle: 'fade',
-                    cssAnimation: true,
-                },
+                failOpts,
             );
-        
+            btnMore.style.display = 'none';
             throw new TypeError('No results');
         }
 
@@ -136,15 +113,7 @@ formData.addEventListener('submit', async function (event) {
     if (inputData.length == '') {
         Notify.failure(
             'Sorry, there are no images matching your search query. Please try again.',
-            {
-                width: '300px',
-                fontSize: '20px',
-                position: 'center-center',
-                timeout: 5000,
-                plainText: false,
-                cssAnimationStyle: 'fade',
-                cssAnimation: true,
-            },
+            failOpts,
         );
         btnMore.style.display = 'none';
         throw new TypeError('No input data');

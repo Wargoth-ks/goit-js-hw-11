@@ -1,7 +1,7 @@
 const params = {
-    typeimg: 'photo',
-    orient: 'horizontal',
-    safeimg: 'true',
+    typeimg: '&imagetype=photo',
+    orient: '&orientation=horizontal',
+    safeimg: '&safesearch=true',
 };
 
 const elems = {
@@ -10,4 +10,24 @@ const elems = {
     btnMore: document.querySelector('.load-more'),
 };
 
-export { params, elems };
+const failOpts = {
+    width: '300px',
+    fontSize: '18px',
+    position: 'center-center',
+    timeout: 5000,
+    plainText: false,
+    cssAnimationStyle: 'fade',
+    cssAnimation: true,
+};
+
+const sucOpts = {
+    width: '300px',
+    fontSize: '20px',
+    position: 'center-top',
+    timeout: 5000,
+    plainText: false,
+    cssAnimationStyle: 'fade',
+    cssAnimation: true,
+};
+
+export { params, elems, failOpts, sucOpts };
