@@ -11,7 +11,8 @@ require('dotenv').config();
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 axios.defaults.headers.get['Content-Type'] = 'application/json';
 
-const api_key = process.env.API_KEY;
+// const api_key = process.env.API_KEY;
+const api_key = "28194821-49041d995ecd04735d9e20d11"
 const { typeimg, orient, safeimg } = params;
 const { formData, gallery, btnMore } = elems;
 
@@ -105,6 +106,7 @@ async function getImages() {
                     cssAnimation: true,
                 },
             );
+        
             throw new TypeError('No results');
         }
 
@@ -144,6 +146,7 @@ formData.addEventListener('submit', async function (event) {
                 cssAnimation: true,
             },
         );
+        btnMore.style.display = 'none';
         throw new TypeError('No input data');
     }
     data = inputData;
